@@ -1,5 +1,4 @@
 import React, { Suspense } from "react";
-import ProductCard from "@/components/ProductCard";
 import ProductList from "@/components/ProductList";
 import Spinner from "@/components/Spinner";
 interface props {
