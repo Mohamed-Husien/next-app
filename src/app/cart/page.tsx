@@ -1,26 +1,10 @@
 "use client";
-
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 import ProductCard from "@/components/ProductCard";
-import { useState, useEffect } from "react";
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  image: string;
-  rating: {
-    rate: number;
-    count: number;
-  };
-}
-export default function CartPage() {
-  const [cart, setCart] = useState<Product[]>([]);
 
-  useEffect(() => {
-    const storedCart = localStorage.getItem("cart");
-    if (storedCart) setCart(JSON.parse(storedCart));
-  }, []);
+export default function CartPage() {
+  const cart = useSelector((state: RootState) => state.cart.items);
 
   if (cart.length === 0)
     return <p className="text-center mt-10">Cart is empty</p>;

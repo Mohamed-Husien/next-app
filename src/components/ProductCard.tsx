@@ -1,9 +1,10 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 import { AiOutlineShoppingCart, AiOutlineDelete } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { addToCart, removeFromCart } from "@/features/cart/cartSlice";
 import styles from "./ProductCard.module.css";
 
 interface Product {
@@ -20,29 +21,9 @@ interface Product {
 }
 
 export default function ProductCard({ product }: { product: Product }) {
-  const [cart, setCart] = useState<Product[]>([]);
-  const [inCart, setInCart] = useState(false);
-
-  useEffect(() => {
-    const storedCart = localStorage.getItem("cart");
-    const currentCart = storedCart ? JSON.parse(storedCart) : [];
-    setCart(currentCart);
-    setInCart(currentCart.some((item: Product) => item.id === product.id));
-  }, []);
-
-  const handleAddToCart = () => {
-    const newCart = [...cart, product];
-    setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
-    setInCart(true);
-  };
-
-  const handleRemoveFromCart = () => {
-    const newCart = cart.filter((item) => item.id !== product.id);
-    setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
-    setInCart(false);
-  };
+  const dispatch = useDispatch();
+  const cart = useSelector((state: RootState) => state.cart.items);
+  const inCart = cart.some((item) => item.id === product.id);
 
   return (
     <div className={styles.card}>
@@ -51,7 +32,6 @@ export default function ProductCard({ product }: { product: Product }) {
         alt={product.title}
         width={200}
         height={200}
-        loading="lazy"
         className={styles.image}
       />
       <h2 className="text-black">{product.title}</h2>
@@ -68,14 +48,14 @@ export default function ProductCard({ product }: { product: Product }) {
 
         {inCart ? (
           <button
-            onClick={handleRemoveFromCart}
+            onClick={() => dispatch(removeFromCart(product.id))}
             className="text-2xl text-red-500 hover:text-red-700"
           >
             <AiOutlineDelete />
           </button>
         ) : (
           <button
-            onClick={handleAddToCart}
+            onClick={() => dispatch(addToCart(product))}
             className="text-2xl text-green-500 hover:text-green-700"
           >
             <AiOutlineShoppingCart />
